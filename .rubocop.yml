@@ -1,0 +1,36 @@
+Rails:
+  Enabled: true
+AllCops:
+  Exclude:
+    - config/**/*
+    - db/**/*
+    - frontend/**/*
+    - log/**/*
+    - node_modules/**/*
+    - public/**/*
+    - tmp/**/*
+    - vendor/**/*
+Documentation:
+  Enabled: false
+Metrics/LineLength:
+  Max: 120
+  IgnoreCopDirectives: true
+Metrics/MethodLength:
+  Max: 15
+Metrics/BlockLength:
+  Exclude:
+    - '**/routes.rb'
+    - config/environments/*
+Metrics/AbcSize:
+  Enabled: false
+Naming/UncommunicativeMethodParamName:
+  MinNameLength: 2
+  AllowedNames:
+    - q
+    - _
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/MixinUsage:
+  Enabled: false
+Rails/OutputSafety:
+  Enabled: false

@@ -1,0 +1,16 @@
+defaults: &defaults
+  host: 127.0.0.1
+  port: 6379
+  db: 0
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+  db: 5
+
+production:
+  <<: *defaults
+  host: redis
+  db: 1

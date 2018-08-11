@@ -1,0 +1,28 @@
+zh-CN:
+  flash:
+    actions:
+      create:
+        success: '%{resource_name} 成功创建.'
+        warning: '%{resource_name} 新增出错.'
+      update:
+        success: '%{resource_name} 成功更新.'
+        warning: '%{resource_name} 更新出错.'
+      destroy:
+        success: '%{resource_name} 成功删除.'
+        warning: '%{resource_name} 删除出错.'
+        #alert_html: "<strong>OH NOES!</strong> You did it wrong!"
+    # https://github.com/plataformatec/responders/issues/68
+    custom_devise:
+      sessions:
+        create:
+          success: ""
+          failure: ""
+    public:
+      regforms:
+        create:
+          notice: ""
+          alert: ""
+        update:
+          notice: "当前步骤成功更新"
+          alert: "当前步骤更新出错"
+
