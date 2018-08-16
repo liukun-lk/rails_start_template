@@ -3,6 +3,7 @@
 Rails.application.routes.draw do
   mount Sidekiq::Web, at: "/sidekiq"
 
-  namespace :public, path:nil do
+  namespace :public, path: nil do
+    root 'home#index'
   end
 end

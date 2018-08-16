@@ -1,21 +1,19 @@
-RAILS_REQUIREMENT = "~> 5.2.0".freeze
+RAILS_REQUIREMENT = '~> 5.2.0'.freeze
 
-require "fileutils"
-require "shellwords"
+require 'fileutils'
+require 'shellwords'
 
 def apply_template!
   assert_minimum_rails_version
   add_template_repository_to_source_path
 
-  template "Gemfile.tt", force: true
+  template 'Gemfile.tt', force: true
 
   apply 'app/template.rb'
   apply 'config/template.rb'
 
   copy_file 'Procfile'
-  copy_file "Capfile" if apply_capistrano?
-
-  ask_optional_options
+  copy_file 'Capfile' if apply_capistrano?
 
   install_optional_gems
 
@@ -24,7 +22,7 @@ def apply_template!
     run 'rails g rspec:install'
     setup_simple_form
 
-    setup_npm_packages
+    setup_npm_packages if apply_komponent?
     setup_gems
 
     run 'bundle binstubs bundler --force'
@@ -52,27 +50,27 @@ end
 # In that case, use `git clone` to download them to a local temporary dir.
 def add_template_repository_to_source_path
   if __FILE__ =~ %r{\Ahttps?://}
-    source_paths.unshift(tempdir = Dir.mktmpdir("rails-template-"))
+    source_paths.unshift(tempdir = Dir.mktmpdir('rails-template-'))
     at_exit { FileUtils.remove_entry(tempdir) }
-    git :clone => [
-      "--quiet",
-      "https://github.com/liukun-lk/rails_start_template",
+    git clone: [
+      '--quiet',
+      'https://github.com/liukun-lk/rails_start_template',
       tempdir
-    ].map(&:shellescape).join(" ")
+    ].map(&:shellescape).join(' ')
   else
     source_paths.unshift(File.dirname(__FILE__))
   end
 end
 
 def gemfile_requirement(name)
-  @original_gemfile ||= IO.read("Gemfile")
+  @original_gemfile ||= IO.read('Gemfile')
   req = @original_gemfile[/gem\s+['"]#{name}['"]\s*(,[><~= \t\d\.\w'"]*)?.*$/, 1]
-  req && req.gsub("'", %(")).strip.sub(/^,\s*"/, ', "')
+  req && req.tr("'", %(")).strip.sub(/^,\s*"/, ', "')
 end
 
 def ask_with_default(question, color, default)
   return default unless $stdin.tty?
-  question = (question.split("?") << " [#{default}]?").join
+  question = (question.split('?') << " [#{default}]?").join
   answer = ask(question, color)
   answer.to_s.strip.empty? ? default : answer
 end
@@ -80,25 +78,40 @@ end
 def apply_capistrano?
   return @apply_capistrano if defined?(@apply_capistrano)
   @apply_capistrano = \
-    ask_with_default("Use Capistrano for deployment?", :blue, "no") \
+    ask_with_default('Use Capistrano for deployment?', :yellow, 'no') \
     =~ /^y(es)?/i
 end
 
-def ask_optional_options
-  @devise = ask_with_default('Do you want to implement authentication in your app with the Devise gem?', :blue, "no")
-  @pundit = ask_with_default('Do you want to manage authorizations with Pundit?', :blue, "no") if @devise
-  @komponent = ask_with_default('Do you want to adopt a component based design for your front-end?', :blue, "no")
+def apply_devise?
+  return @devise if defined?(@devise)
+  @devise = \
+    ask_with_default('Do you want to implement authentication in your app with the Devise gem?', :yellow, 'no') \
+    =~ /^y(es)?/i
+end
+
+def apply_pundit?
+  return @pundit if defined?(@pundit)
+  @pundit = \
+    ask_with_default('Do you want to manage authorizations with Pundit?', :yellow, 'no') \
+    =~ /^y(es)?/i
+end
+
+def apply_komponent?
+  return @komponent if defined?(@komponent)
+  @komponent = \
+    ask_with_default('Do you want to adopt a component based design for your front-end?', :yellow, 'no') \
+    =~ /^y(es)?/i
 end
 
 def production_hostname
   @production_hostname ||=
-    ask_with_default("Production hostname?", :blue, "example.com")
+    ask_with_default('Production hostname?', :yellow, 'example.com')
 end
 
 def install_optional_gems
-  add_devise if @devise
-  add_pundit if @pundit
-  add_komponent if @komponent
+  add_devise if apply_devise?
+  add_pundit if apply_pundit?
+  add_komponent if apply_komponent?
 end
 
 def add_devise
@@ -125,15 +138,13 @@ def add_linters
   run 'yarn add normalize.css'
 end
 
-
-
 def setup_gems
   setup_annotate
   setup_bullet
   setup_rubocop
-  setup_komponent if @komponent
-  setup_devise if @devise
-  setup_pundit if @pundit
+  setup_komponent if apply_komponent?
+  setup_devise if apply_devise?
+  setup_pundit if apply_pundit?
   setup_responder
 end
 
@@ -164,7 +175,7 @@ def run_with_clean_bundler_env(cmd)
 end
 
 def run_rubocop_autocorrections
-  run_with_clean_bundler_env "bin/rubocop -a --fail-level A > /dev/null || true"
+  run_with_clean_bundler_env 'bin/rubocop -a --fail-level A > /dev/null || true'
 end
 
 def setup_rubocop
@@ -179,6 +190,8 @@ def setup_komponent
 end
 
 def install_komponent
+  copy_file 'frontend/components/index.js'
+  copy_file 'frontend/packs/application.js'
   run 'rails g komponent:install'
   FileUtils.rm_rf 'app/javascript'
   insert_into_file 'config/application.rb', "    config.autoload_paths << config.root.join('frontend/components')", after: /'class Application < Rails::Application'\n/
