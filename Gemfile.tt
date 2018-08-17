@@ -23,6 +23,7 @@ gem 'sidekiq'
 
 gem 'bootstrap', '~> 4.1.1'
 gem 'data-confirm-modal'
+gem 'coreui-rails', github: 'liukun-lk/coreui-rails'
 
 gem 'rucaptcha'
 

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Appdemo</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show pace-done aside-menu-hidden">
+    <%= render 'shared/header' %>
+    <div class="app-body">
+      <%= render 'shared/nav' %>
+      <main class="main">
+        <%= yield %>
+      </main>
+      <%= render 'shared/aside' %>
+    </div>
+    <%= render 'shared/footer' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </body>
+</html>

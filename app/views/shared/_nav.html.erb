@@ -1,0 +1,34 @@
+<div class="sidebar">
+  <nav class="sidebar-nav">
+    <ul class="nav">
+      <% nav_items.each do |item| %>
+        <% if item[:children] %>
+          <li class="nav-item nav-dropdown">
+            <%= link_to item[:path], class: "nav-link nav-dropdown-toggle #{item[:klass]}" do %>
+              <i class="nav-icon icon-<%= item[:icon] %>"></i>
+              <%= item[:title] %>
+            <% end %>
+            <ul class="nav-dropdown-items" >
+              <% item[:children].each do |child| %>
+                <li class="nav-item">
+                  <%= link_to child[:path], class: 'nav-link' do %>
+                    <i class="nav-icon icon-<%= child[:icon] || item[:icon] %>"></i>
+                    <%= child[:title] %>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          </li>
+        <% else %>
+          <li class="nav-item">
+            <%= link_to item[:path], class: 'nav-link' do %>
+              <i class="nav-icon icon-<%= item[:icon] %>"></i>
+              <%= item[:title] %>
+            <% end %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </nav>
+  <button class="sidebar-minimizer brand-minimizer" type="button"></button>
+</div>
