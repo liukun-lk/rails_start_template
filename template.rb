@@ -1,4 +1,4 @@
-RAILS_REQUIREMENT = '~> 5.2.0'.freeze
+RAILS_REQUIREMENT = '~> 6.0'.freeze
 
 require 'fileutils'
 require 'shellwords'
